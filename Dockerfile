@@ -1,30 +1,31 @@
 FROM debian:buster
 
 RUN apt-get update && apt-get install -y nginx \
-										mariadb-server \
-										mariadb-client \ 
-										php7.3 \
-										php7.3-fpm \
-										php7.3-mbstring \
-										php7.3-mysql \
-										openssl
+				mariadb-server \
+				mariadb-client \ 
+				php7.3 \
+				php7.3-fpm \
+				php7.3-mbstring \
+				php7.3-mysql \
+				openssl \
+				vim
 
 COPY srcs/wordpress /var/www/wordpress
 COPY srcs/phpmyadmin /var/www/phpmyadmin
 
 COPY srcs/wp_db.sql .
-
-COPY srcs/ssl.conf .
-
-COPY srcs/nginx.conf /etc/nginx/sites-available
-
-RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled \
-	&& unlink /etc/nginx/sites-enabled/default
+COPY srcs/localhost.conf .
+COPY srcs/nginx.conf /etc/nginx/sites-available/default
 
 RUN service mysql start && cat wp_db.sql | mariadb -u root
 
-RUN openssl req -x509 -newkey rsa:512 -nodes -config ssl.conf \
-	-keyout /etc/nginx/nginx.key -out /etc/nginx/nginx.cert
+COPY srcs/localhost.crt /etc/ssl/certs/localhost.crt
+COPY srcs/localhost.key /etc/ssl/private/localhost.key
+
+#RUN openssl req -x509 -newkey rsa:2048 -nodes -config localhost.conf -days 365 \
+#	-keyout localhost.key -out localhost.crt && echo '.'
+
+#RUN service nginx reload
 
 EXPOSE 80 443
 
