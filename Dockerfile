@@ -22,11 +22,6 @@ RUN service mysql start && cat wp_db.sql | mariadb -u root
 COPY srcs/localhost.crt /etc/ssl/certs/localhost.crt
 COPY srcs/localhost.key /etc/ssl/private/localhost.key
 
-#RUN openssl req -x509 -newkey rsa:2048 -nodes -config localhost.conf -days 365 \
-#	-keyout localhost.key -out localhost.crt && echo '.'
-
-#RUN service nginx reload
-
 EXPOSE 80 443
 
 CMD service mysql start && service php7.3-fpm start && \
