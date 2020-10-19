@@ -14,7 +14,6 @@ COPY srcs/wordpress /var/www/wordpress
 COPY srcs/phpmyadmin /var/www/phpmyadmin
 
 COPY srcs/wp_db.sql .
-COPY srcs/localhost.conf .
 COPY srcs/nginx.conf /etc/nginx/sites-available/default
 
 RUN service mysql start && cat wp_db.sql | mariadb -u root
